@@ -13,7 +13,8 @@ import java.util.stream.StreamSupport;
 public class CensusAnalyser {
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
-            Iterator<IndiaCensusCSV> censusCSVIterator = getCsvFileIterator(reader,IndiaCensusCSV.class);
+            Iterator<IndiaCensusCSV> censusCSVIterator = new OpenCsvBuilder()
+                                                            .getCsvFileIterator(reader,IndiaCensusCSV.class);
             int numOfEntries = getCountUsingIterator(censusCSVIterator);
             return numOfEntries;
         } catch (IOException e) {
@@ -24,7 +25,8 @@ public class CensusAnalyser {
 
     public int loadIndiaStateCodeData(String csvFilePath) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
-            Iterator<IndiaStateCode> censusCSVIterator = getCsvFileIterator(reader,IndiaStateCode.class);
+            Iterator<IndiaStateCode> censusCSVIterator = new OpenCsvBuilder()
+                                                            .getCsvFileIterator(reader,IndiaStateCode.class);
             int numOfEntries = getCountUsingIterator(censusCSVIterator);
             return numOfEntries;
         } catch (IOException e) {
@@ -38,19 +40,5 @@ public class CensusAnalyser {
         int numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(),false).count();
         return numOfEntries;
     }
-
-    private  <E> Iterator<E> getCsvFileIterator(Reader reader, Class<E> csvClass) throws CensusAnalyserException {
-        try {
-            CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
-            csvToBeanBuilder.withType(csvClass);
-            csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-            CsvToBean<E> csvToBean = csvToBeanBuilder.build();
-            return csvToBean.iterator();
-        } catch (IllegalStateException e){
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
-        }
-    }
-
 
 }
