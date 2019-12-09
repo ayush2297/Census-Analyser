@@ -20,6 +20,8 @@ public class CensusAnalyser {
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (OpenCsvException e) {
+            throw new CensusAnalyserException(e.getMessage(),e.type.name());
         }
     }
 
@@ -32,6 +34,8 @@ public class CensusAnalyser {
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (OpenCsvException e) {
+            throw new CensusAnalyserException(e.getMessage(),e.type.name());
         }
     }
 
