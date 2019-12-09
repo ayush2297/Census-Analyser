@@ -14,8 +14,7 @@ public class CensusAnalyser {
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             Iterator<IndiaCensusCSV> censusCSVIterator = getCsvFileIterator(reader,IndiaCensusCSV.class);
-            Iterable<IndiaCensusCSV> censusCSVIterable = () -> censusCSVIterator;
-            int numOfEntries = (int) StreamSupport.stream(censusCSVIterable.spliterator(),false).count();
+            int numOfEntries = getCountUsingIterator(censusCSVIterator);
             return numOfEntries;
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
@@ -29,13 +28,18 @@ public class CensusAnalyser {
     public int loadIndiaStateCodeData(String csvFilePath) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             Iterator<IndiaStateCode> censusCSVIterator = getCsvFileIterator(reader,IndiaStateCode.class);
-            Iterable<IndiaStateCode> censusCSVIterable = () -> censusCSVIterator;
-            int numOfEntries = (int) StreamSupport.stream(censusCSVIterable.spliterator(),false).count();
+            int numOfEntries = getCountUsingIterator(censusCSVIterator);
             return numOfEntries;
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         }
+    }
+
+    private <E> int getCountUsingIterator(Iterator<E> csvIterator) {
+        Iterable csvIterable = () -> csvIterator;
+        int numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(),false).count();
+        return numOfEntries;
     }
 
     private  <E> Iterator<E> getCsvFileIterator(Reader reader, Class<E> csvClass) throws CensusAnalyserException {
@@ -50,4 +54,6 @@ public class CensusAnalyser {
                     CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
         }
     }
+
+
 }
