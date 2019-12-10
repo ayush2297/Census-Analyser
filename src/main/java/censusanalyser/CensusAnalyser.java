@@ -1,7 +1,8 @@
 package censusanalyser;
 
 import com.google.gson.Gson;
-//import com.myopencsv.*;
+
+import com.myopencsv.*;
 //import com.myopencsv.ICsvBuilder;
 //import com.myopencsv.OpenCsvException;
 
@@ -68,9 +69,16 @@ public class CensusAnalyser {
         return numOfEntries;
     }
 
-    public String getStateWiseSortedDataForCensusData() throws CensusAnalyserException {
+    public boolean isNull(List thisList) {
         if (censusList == null || censusList.size() == 0 ) {
-            throw new CensusAnalyserException("no census data!",CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+            return false;
+        }
+        return true;
+    }
+    public String getStateWiseSortedDataForCensusData() throws CensusAnalyserException {
+        if (isNull(censusList)) {
+            throw new CensusAnalyserException("no census data!",
+                    CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
         Comparator<IndiaCensusDAO> censusComparator = Comparator.comparing(census -> census.state);
         this.sort(censusList, censusComparator);
