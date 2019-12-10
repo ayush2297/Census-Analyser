@@ -23,24 +23,29 @@ public class CensusAnalyser {
     }
 
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
+        int counter = 1;
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<IndiaCensusCSV> csvIterator = null;
             try {
                 csvIterator = csvBuilder.getCsvFileIterator(reader,IndiaCensusCSV.class);
             } catch (RuntimeException e){
-                throw new CensusAnalyserException(e.getMessage(),
-                        CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+                throw new CensusAnalyserException(e.getMessage()+" or delimiter error at line 1",
+                        CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
             }
-            while (csvIterator.hasNext()){
+            do {
+                counter++;
                 this.censusList.add(new IndiaCensusDAO(csvIterator.next()));
-            }
+            } while ( csvIterator.hasNext() );
             return censusList.size();
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (OpenCsvException e) {
             throw new CensusAnalyserException(e.getMessage(),e.type.name());
+        } catch (RuntimeException e){
+            throw new CensusAnalyserException("might be some error related to delimiter at line : " +(counter+1),
+                    CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
         }
     }
 

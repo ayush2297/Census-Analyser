@@ -21,7 +21,6 @@ public class OpenCsvBuilder<E> implements ICsvBuilder {
             CsvToBean<E> csvToBean = csvToBeanBuilder.build();
             return csvToBean;
         } catch (RuntimeException e){
-            System.out.println("asdjkhdaskkjasdjkhas ");
             throw new OpenCsvException(e.getCause().getMessage(),
                     OpenCsvException.ExceptionType.UNABLE_TO_CREATE_BEAN);
         }
