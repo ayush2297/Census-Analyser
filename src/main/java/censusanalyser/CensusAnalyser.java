@@ -71,10 +71,11 @@ public class CensusAnalyser {
 
     public boolean isNull(List thisList) {
         if (censusList == null || censusList.size() == 0 ) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
+
     public String getStateWiseSortedDataForCensusData() throws CensusAnalyserException {
         if (isNull(censusList)) {
             throw new CensusAnalyserException("no census data!",
