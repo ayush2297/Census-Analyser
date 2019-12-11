@@ -14,10 +14,20 @@ import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
 
-    Map<String,IndiaCensusDAO> censusDAOMap = null;
+    enum ComparatorType {
+        STATE_NAME, POPULATION, AREA, DENSITY
+    }
+    ComparatorType comptype;
 
+    Map<String,IndiaCensusDAO> censusDAOMap = null;
+    Map<Enum,Comparator<IndiaCensusDAO>> myComparators = null;
     public CensusAnalyser() {
         this.censusDAOMap = new HashMap<>();
+        this.myComparators = new HashMap<>();
+        this.myComparators.put(ComparatorType.STATE_NAME,Comparator.comparing(census -> census.state));
+        this.myComparators.put(ComparatorType.POPULATION,Comparator.comparing(census -> census.population));
+        this.myComparators.put(ComparatorType.AREA,Comparator.comparing(census -> census.areaInSqKm));
+        this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm));
     }
 
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
@@ -33,7 +43,7 @@ public class CensusAnalyser {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (OpenCsvException e) {
-            throw new CensusAnalyserException(e.getMessage(),e.type.name());
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
         } catch (RuntimeException e){
             throw new CensusAnalyserException("might be some error related to delimiter at line : " +(counter+1),
                     CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
@@ -59,7 +69,7 @@ public class CensusAnalyser {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (OpenCsvException e) {
-            throw new CensusAnalyserException(e.getMessage(),e.type.name());
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
         }
     }
 
