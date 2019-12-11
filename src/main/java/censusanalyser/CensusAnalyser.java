@@ -1,11 +1,9 @@
 package censusanalyser;
 
 import com.google.gson.Gson;
-
-//import com.myopencsv.*;
-//import com.myopencsv.ICsvBuilder;
-//import com.myopencsv.OpenCsvException;
-
+import com.myopencsv.CsvBuilderFactory;
+import com.myopencsv.ICsvBuilder;
+import com.myopencsv.OpenCsvException;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -45,7 +43,6 @@ public class CensusAnalyser {
         int counter = 0;
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
-//            List<IndiaStateCode> stateCodeCsvList = csvBuilder.getCsvFileAsList(reader,IndiaStateCode.class);
             Iterator<IndiaStateCode> stateCodeIterator = csvBuilder.getCsvFileIterator(reader,IndiaStateCode.class);
             while(stateCodeIterator.hasNext()){
                 IndiaStateCode stateCsvObj = stateCodeIterator.next();
@@ -63,12 +60,6 @@ public class CensusAnalyser {
         } catch (OpenCsvException e) {
             throw new CensusAnalyserException(e.getMessage(),e.type.name());
         }
-    }
-
-    private <E> int getCountUsingIterator(Iterator<E> csvIterator) {
-        Iterable csvIterable = () -> csvIterator;
-        int numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(),false).count();
-        return numOfEntries;
     }
 
     public boolean isNull(Map thisList) {
