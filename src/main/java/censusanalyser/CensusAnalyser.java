@@ -2,7 +2,7 @@ package censusanalyser;
 
 import com.google.gson.Gson;
 
-import com.myopencsv.*;
+//import com.myopencsv.*;
 //import com.myopencsv.ICsvBuilder;
 //import com.myopencsv.OpenCsvException;
 
@@ -27,17 +27,10 @@ public class CensusAnalyser {
         int counter = 1;
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
-            Iterator<IndiaCensusCSV> csvIterator = null;
-            try {
-                csvIterator = csvBuilder.getCsvFileIterator(reader,IndiaCensusCSV.class);
-            } catch (RuntimeException e){
-                throw new CensusAnalyserException(e.getMessage()+" or delimiter error at line 1",
-                        CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
-            }
-            do {
-                counter++;
-                this.censusList.add(new IndiaCensusDAO(csvIterator.next()));
-            } while ( csvIterator.hasNext() );
+            Iterator<IndiaCensusCSV> csvIterator = csvBuilder.getCsvFileIterator(reader,IndiaCensusCSV.class);
+            Iterable<IndiaCensusCSV> csvIterable = () -> csvIterator;
+            StreamSupport.stream(csvIterable.spliterator(),false).
+                    forEach(censusCSV -> censusList.add(new IndiaCensusDAO(censusCSV)));
             return censusList.size();
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
