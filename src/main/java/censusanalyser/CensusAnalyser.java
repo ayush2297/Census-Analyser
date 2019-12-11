@@ -80,14 +80,14 @@ public class CensusAnalyser {
         return false;
     }
 
-    public String getStateWiseSortedDataForCensusData() throws CensusAnalyserException {
+    public String getSortedData(ComparatorType comparatorType) throws CensusAnalyserException {
         if (isNull(censusDAOMap)) {
             throw new CensusAnalyserException("no census data!",
                     CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
-        Comparator<IndiaCensusDAO> censusComparator = Comparator.comparing(census -> census.state);
         List<IndiaCensusDAO> censusDAOS = censusDAOMap.values().stream()
                                             .collect(Collectors.toList());
+        Comparator<IndiaCensusDAO> censusComparator = myComparators.get(comparatorType);
         this.sort(censusDAOS, censusComparator);
         String sorted = new Gson().toJson(censusDAOS);
         return sorted;
