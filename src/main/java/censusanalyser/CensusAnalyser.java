@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
+
     Map<String,IndiaCensusDAO> censusDAOMap = null;
 
     public CensusAnalyser() {
