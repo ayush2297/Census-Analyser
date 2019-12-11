@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
 
-    enum ComparatorType {
+    public enum ComparatorType {
         STATE_NAME, POPULATION, AREA, DENSITY
     }
     ComparatorType comptype;
