@@ -105,6 +105,42 @@ public class CensusAnalyserTest {
     }
 
     @Test
+    public void givenIndianCensusData_WhenSortedBasedOnPopulation_ShouldReturnSortedList() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+            censusAnalyser.loadIndiaStateCodeData(INDIA_STATE_CODE_CSV_FILE_PATH);
+            String sortedString = censusAnalyser.getSortedData(CensusAnalyser.ComparatorType.POPULATION);
+            IndiaCensusCSV[] indiaCensusCSV = new Gson().fromJson(sortedString, IndiaCensusCSV[].class);
+            Assert.assertEquals("Uttar Pradesh", indiaCensusCSV[0].state);
+        } catch (CensusAnalyserException e) { e.printStackTrace(); }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedBasedOnArea_ShouldReturnSortedList() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+            censusAnalyser.loadIndiaStateCodeData(INDIA_STATE_CODE_CSV_FILE_PATH);
+            String sortedString = censusAnalyser.getSortedData(CensusAnalyser.ComparatorType.AREA);
+            IndiaCensusCSV[] indiaCensusCSV = new Gson().fromJson(sortedString, IndiaCensusCSV[].class);
+            Assert.assertEquals("Rajasthan", indiaCensusCSV[0].state);
+        } catch (CensusAnalyserException e) { e.printStackTrace(); }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedBasedOnDensity_ShouldReturnSortedList() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+            censusAnalyser.loadIndiaStateCodeData(INDIA_STATE_CODE_CSV_FILE_PATH);
+            String sortedString = censusAnalyser.getSortedData(CensusAnalyser.ComparatorType.DENSITY);
+            IndiaCensusCSV[] indiaCensusCSV = new Gson().fromJson(sortedString, IndiaCensusCSV[].class);
+            Assert.assertEquals("Bihar", indiaCensusCSV[0].state);
+        } catch (CensusAnalyserException e) { e.printStackTrace(); }
+    }
+
+    @Test
     public void givenIndianStateCodeCsv_ShouldReturnExactCount() {
         try {
             CensusAnalyser censusAnalyser = new CensusAnalyser();
