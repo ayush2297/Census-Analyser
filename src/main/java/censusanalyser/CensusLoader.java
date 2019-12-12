@@ -20,7 +20,8 @@ public class CensusLoader {
         this.censusDAOMap = new HashMap<>();
     }
 
-    public <E> Map<String, CensusDAO> loadCensusData(Class<E> censusDataClass, String... csvFilePath) throws CensusAnalyserException {
+
+    private <E> Map<String, CensusDAO> loadCensusData(Class<E> censusDataClass, String... csvFilePath) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath[0]));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<E> usCensusDataIterator = csvBuilder.getCsvFileIterator(reader,censusDataClass);
@@ -73,4 +74,13 @@ public class CensusLoader {
         }
     }
 
+    public Map<String, CensusDAO> loadCensusData(CensusAnalyser.CountryName countryName, String[] csvFilePath) throws CensusAnalyserException {
+        if (countryName.equals(CensusAnalyser.CountryName.INDIA)) {
+            return this.loadCensusData(IndiaCensusCSV.class, csvFilePath);
+        } else if (countryName.equals(CensusAnalyser.CountryName.US)) {
+            return this.loadCensusData(USCensusData.class, csvFilePath);
+        }
+        else throw new CensusAnalyserException("please enter correct country",
+                    CensusAnalyserException.ExceptionType.INCORRECT_COUNTRY_ENTERED);
+    }
 }

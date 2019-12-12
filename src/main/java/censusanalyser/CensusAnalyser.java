@@ -13,15 +13,18 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
+    Map<String, CensusDAO> censusDAOMap = null;
+    Map<Enum,Comparator<CensusDAO>> myComparators = null;
 
+    public enum CountryName {
+        INDIA,US
 
+    }
 
     public enum ComparatorType {
         STATE_NAME, POPULATION, AREA, DENSITY;
     }
-    Map<String, CensusDAO> censusDAOMap = null;
 
-    Map<Enum,Comparator<CensusDAO>> myComparators = null;
     public CensusAnalyser() {
         this.censusDAOMap = new HashMap<>();
         this.myComparators = new HashMap<>();
@@ -30,17 +33,11 @@ public class CensusAnalyser {
         this.myComparators.put(ComparatorType.AREA,Comparator.comparing(census -> census.areaInSqKm,Comparator.reverseOrder()));
         this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm,Comparator.reverseOrder()));
     }
-    public int loadIndiaCensusData(String... csvFilePath) throws CensusAnalyserException {
-        censusDAOMap = new CensusLoader().loadCensusData(IndiaCensusCSV.class,csvFilePath);
+
+    public int loadCensusData(CountryName countryName, String... csvFilePath) throws CensusAnalyserException {
+        censusDAOMap = new CensusLoader().loadCensusData(countryName,csvFilePath);
         return censusDAOMap.size();
     }
-
-    public int loadUSCensusData(String csvFilePath) throws CensusAnalyserException {
-        censusDAOMap = new CensusLoader().loadCensusData(USCensusData.class,csvFilePath);
-        return censusDAOMap.size();
-    }
-
-
 
     public boolean isNull(Map thisList) {
         if (censusDAOMap == null || censusDAOMap.size() == 0 ) {
