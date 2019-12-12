@@ -17,7 +17,6 @@ public class CensusAnalyser {
     public enum ComparatorType {
         STATE_NAME, POPULATION, AREA, DENSITY
     }
-    ComparatorType comptype;
 
     Map<String,IndiaCensusDAO> censusDAOMap = null;
     Map<Enum,Comparator<IndiaCensusDAO>> myComparators = null;
@@ -87,8 +86,7 @@ public class CensusAnalyser {
         }
         List<IndiaCensusDAO> censusDAOS = censusDAOMap.values().stream()
                                             .collect(Collectors.toList());
-        Comparator<IndiaCensusDAO> censusComparator = myComparators.get(comparatorType);
-        this.sort(censusDAOS, censusComparator);
+        this.sort(censusDAOS, myComparators.get(comparatorType));
         String sorted = new Gson().toJson(censusDAOS);
         return sorted;
     }
