@@ -14,10 +14,14 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 public class CensusLoader {
+    Map<String,CensusDAO> censusDAOMap = null;
 
-    public <E> Map<String, CensusDAO> loadCensusData(String csvFilePath, Class<E> censusDataClass) throws CensusAnalyserException {
-        Map<String,CensusDAO> censusDAOMap = new HashMap<>();
-        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
+    public CensusLoader() {
+        this.censusDAOMap = new HashMap<>();
+    }
+
+    public <E> Map<String, CensusDAO> loadCensusData(Class<E> censusDataClass, String... csvFilePath) throws CensusAnalyserException {
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath[0]));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<E> usCensusDataIterator = csvBuilder.getCsvFileIterator(reader,censusDataClass);
             Iterable<E> usCensusDataIterable = () -> usCensusDataIterator;
@@ -30,6 +34,10 @@ public class CensusLoader {
                         .map(IndiaCensusCSV.class::cast)
                         .forEach(censusCSV -> censusDAOMap.put(censusCSV.state, new CensusDAO(censusCSV)));
             }
+            if (csvFilePath.length == 1){
+                return censusDAOMap;
+            }
+            this.loadIndiaStateCodeData(csvFilePath[1]);
             return censusDAOMap;
         } catch (NullPointerException e){
             throw new CensusAnalyserException(e.getMessage(),
@@ -43,4 +51,26 @@ public class CensusLoader {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
         }
     }
+
+    private void loadIndiaStateCodeData(String csvFilePath) throws CensusAnalyserException {
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
+            ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
+            Iterator<IndiaStateCode> stateCodeIterator = csvBuilder.getCsvFileIterator(reader,IndiaStateCode.class);
+            Iterable<IndiaStateCode> stateCodeIterable = () -> stateCodeIterator;
+            StreamSupport.stream(stateCodeIterable.spliterator(), false)
+                    .filter(csvStatev -> censusDAOMap.get(csvStatev.state) != null)
+                    .forEach(csvState -> censusDAOMap.get(csvState.state).stateCode = csvState.stateCode);
+        } catch (NullPointerException e){
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (IOException e) {
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (OpenCsvException e) {
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
+        } catch (RuntimeException e) {
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
+        }
+    }
+
 }

@@ -30,30 +30,13 @@ public class CensusAnalyser {
         this.myComparators.put(ComparatorType.AREA,Comparator.comparing(census -> census.areaInSqKm,Comparator.reverseOrder()));
         this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm,Comparator.reverseOrder()));
     }
-    public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
-        censusDAOMap = new CensusLoader().loadCensusData(csvFilePath,IndiaCensusCSV.class);
+    public int loadIndiaCensusData(String... csvFilePath) throws CensusAnalyserException {
+        censusDAOMap = new CensusLoader().loadCensusData(IndiaCensusCSV.class,csvFilePath);
         return censusDAOMap.size();
     }
 
-    public int loadIndiaStateCodeData(String csvFilePath) throws CensusAnalyserException {
-        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
-            ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
-            Iterator<IndiaStateCode> stateCodeIterator = csvBuilder.getCsvFileIterator(reader,IndiaStateCode.class);
-            Iterable<IndiaStateCode> stateCodeIterable = () -> stateCodeIterator;
-            StreamSupport.stream(stateCodeIterable.spliterator(), false)
-                    .filter(csvStatev -> censusDAOMap.get(csvStatev.state) != null)
-                    .forEach(csvState -> censusDAOMap.get(csvState.state).stateCode = csvState.stateCode);
-            return censusDAOMap.size();
-        } catch (IOException e) {
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        } catch (OpenCsvException e) {
-            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
-        }
-    }
-
     public int loadUSCensusData(String csvFilePath) throws CensusAnalyserException {
-        censusDAOMap = new CensusLoader().loadCensusData(csvFilePath,USCensusData.class);
+        censusDAOMap = new CensusLoader().loadCensusData(USCensusData.class,csvFilePath);
         return censusDAOMap.size();
     }
 
