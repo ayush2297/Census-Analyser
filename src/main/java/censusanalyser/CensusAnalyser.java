@@ -57,19 +57,11 @@ public class CensusAnalyser {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<IndiaStateCode> stateCodeIterator = csvBuilder.getCsvFileIterator(reader,IndiaStateCode.class);
-            while(stateCodeIterator.hasNext()){
-                IndiaStateCode stateCsvObj = stateCodeIterator.next();
-                IndiaCensusDAO daoObject = censusDAOMap.get(stateCsvObj.state);
-                counter++;
-                if (daoObject == null) {
-                    continue;
-                }
-                daoObject.stateCode = stateCsvObj.stateCode;
-            }
-            return counter;
-        } catch (NullPointerException e){
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+            Iterable<IndiaStateCode> stateCodeIterable = () -> stateCodeIterator;
+            StreamSupport.stream(stateCodeIterable.spliterator(), false)
+                    .filter(csvStatev -> censusDAOMap.get(csvStatev.state) != null)
+                    .forEach(csvState -> censusDAOMap.get(csvState.state).stateCode = csvState.stateCode);
+            return censusDAOMap.size();
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
