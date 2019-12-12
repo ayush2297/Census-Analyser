@@ -38,6 +38,9 @@ public class CensusAnalyser {
             StreamSupport.stream(csvIterable.spliterator(),false).
                     forEach(censusCSV -> censusDAOMap.put(censusCSV.state,new IndiaCensusDAO(censusCSV)));
             return censusDAOMap.size();
+        } catch (NullPointerException e){
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
@@ -64,6 +67,9 @@ public class CensusAnalyser {
                 daoObject.stateCode = stateCsvObj.stateCode;
             }
             return counter;
+        } catch (NullPointerException e){
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
