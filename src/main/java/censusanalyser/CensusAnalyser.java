@@ -1,16 +1,9 @@
 package censusanalyser;
 
 import com.google.gson.Gson;
-import com.myopencsv.CsvBuilderFactory;
-import com.myopencsv.ICsvBuilder;
-import com.myopencsv.OpenCsvException;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
     Map<String, CensusDAO> censusDAOMap = null;
@@ -35,7 +28,8 @@ public class CensusAnalyser {
     }
 
     public int loadCensusData(CountryName countryName, String... csvFilePath) throws CensusAnalyserException {
-        censusDAOMap = new CensusLoader().loadCensusData(countryName,csvFilePath);
+        CensusAdapter censusAdapter = CensusAdapterFactory.getAdapter(countryName);
+        censusDAOMap = censusAdapter.loadCensusData(csvFilePath);
         return censusDAOMap.size();
     }
 
