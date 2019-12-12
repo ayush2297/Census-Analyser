@@ -31,26 +31,8 @@ public class CensusAnalyser {
         this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm,Comparator.reverseOrder()));
     }
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
-        int counter = 1;
-        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
-            ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
-            Iterator<IndiaCensusCSV> csvIterator = csvBuilder.getCsvFileIterator(reader,IndiaCensusCSV.class);
-            Iterable<IndiaCensusCSV> csvIterable = () -> csvIterator;
-            StreamSupport.stream(csvIterable.spliterator(),false).
-                    forEach(censusCSV -> censusDAOMap.put(censusCSV.state,new CensusDAO(censusCSV)));
-            return censusDAOMap.size();
-        } catch (NullPointerException e){
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        } catch (IOException e) {
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        } catch (OpenCsvException e) {
-            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
-        } catch (RuntimeException e){
-            throw new CensusAnalyserException("might be some error related to delimiter at line : " +(counter+1),
-                    CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
-        }
+        int count = this.loadCenusData(csvFilePath,IndiaCensusCSV.class);
+        return count;
     }
 
     public int loadIndiaStateCodeData(String csvFilePath) throws CensusAnalyserException {
@@ -71,17 +53,34 @@ public class CensusAnalyser {
     }
 
     public int loadUSCensusData(String csvFilePath) throws CensusAnalyserException {
+        int count = this.loadCenusData(csvFilePath,USCensusData.class);
+        return count;
+    }
+
+    private <E> int loadCenusData(String csvFilePath, Class<E> censusDataClass) throws CensusAnalyserException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
-            Iterator<USCensusData> usCensusDataIterator = csvBuilder.getCsvFileIterator(reader,USCensusData.class);
-            Iterable<USCensusData> usCensusDataIterable = () -> usCensusDataIterator;
-            StreamSupport.stream(usCensusDataIterable.spliterator(),false).
-                    forEach(censusCSV -> censusDAOMap.put(censusCSV.state,new CensusDAO(censusCSV)));
+            Iterator<E> usCensusDataIterator = csvBuilder.getCsvFileIterator(reader,censusDataClass);
+            Iterable<E> usCensusDataIterable = () -> usCensusDataIterator;
+            if (censusDataClass.getName().equals("censusanalyser.USCensusData")) {
+                StreamSupport.stream(usCensusDataIterable.spliterator(), false)
+                        .map(USCensusData.class::cast)
+                        .forEach(censusCSV -> censusDAOMap.put(censusCSV.state, new CensusDAO(censusCSV)));
+            } else if (censusDataClass.getName().contains("censusanalyser.IndiaCensusCSV")) {
+                StreamSupport.stream(usCensusDataIterable.spliterator(), false)
+                        .map(IndiaCensusCSV.class::cast)
+                        .forEach(censusCSV -> censusDAOMap.put(censusCSV.state, new CensusDAO(censusCSV)));
+            }
             return censusDAOMap.size();
+        } catch (NullPointerException e){
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (OpenCsvException e) {
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
+        } catch (RuntimeException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
         }
     }
