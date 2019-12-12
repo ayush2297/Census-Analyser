@@ -14,12 +14,14 @@ import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
 
-    public enum ComparatorType {
-        STATE_NAME, POPULATION, AREA, DENSITY
-    }
 
-    Map<String,IndiaCensusDAO> censusDAOMap = null;
-    Map<Enum,Comparator<IndiaCensusDAO>> myComparators = null;
+
+    public enum ComparatorType {
+        STATE_NAME, POPULATION, AREA, DENSITY;
+    }
+    Map<String, CensusDAO> censusDAOMap = null;
+
+    Map<Enum,Comparator<CensusDAO>> myComparators = null;
     public CensusAnalyser() {
         this.censusDAOMap = new HashMap<>();
         this.myComparators = new HashMap<>();
@@ -28,7 +30,6 @@ public class CensusAnalyser {
         this.myComparators.put(ComparatorType.AREA,Comparator.comparing(census -> census.areaInSqKm,Comparator.reverseOrder()));
         this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm,Comparator.reverseOrder()));
     }
-
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
         int counter = 1;
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
@@ -36,7 +37,7 @@ public class CensusAnalyser {
             Iterator<IndiaCensusCSV> csvIterator = csvBuilder.getCsvFileIterator(reader,IndiaCensusCSV.class);
             Iterable<IndiaCensusCSV> csvIterable = () -> csvIterator;
             StreamSupport.stream(csvIterable.spliterator(),false).
-                    forEach(censusCSV -> censusDAOMap.put(censusCSV.state,new IndiaCensusDAO(censusCSV)));
+                    forEach(censusCSV -> censusDAOMap.put(censusCSV.state,new CensusDAO(censusCSV)));
             return censusDAOMap.size();
         } catch (NullPointerException e){
             throw new CensusAnalyserException(e.getMessage(),
@@ -53,7 +54,6 @@ public class CensusAnalyser {
     }
 
     public int loadIndiaStateCodeData(String csvFilePath) throws CensusAnalyserException {
-        int counter = 0;
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<IndiaStateCode> stateCodeIterator = csvBuilder.getCsvFileIterator(reader,IndiaStateCode.class);
@@ -61,6 +61,22 @@ public class CensusAnalyser {
             StreamSupport.stream(stateCodeIterable.spliterator(), false)
                     .filter(csvStatev -> censusDAOMap.get(csvStatev.state) != null)
                     .forEach(csvState -> censusDAOMap.get(csvState.state).stateCode = csvState.stateCode);
+            return censusDAOMap.size();
+        } catch (IOException e) {
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+        } catch (OpenCsvException e) {
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
+        }
+    }
+
+    public int loadUSCensusData(String csvFilePath) throws CensusAnalyserException {
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
+            ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
+            Iterator<USCensusData> usCensusDataIterator = csvBuilder.getCsvFileIterator(reader,USCensusData.class);
+            Iterable<USCensusData> usCensusDataIterable = () -> usCensusDataIterator;
+            StreamSupport.stream(usCensusDataIterable.spliterator(),false).
+                    forEach(censusCSV -> censusDAOMap.put(censusCSV.state,new CensusDAO(censusCSV)));
             return censusDAOMap.size();
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
@@ -82,18 +98,18 @@ public class CensusAnalyser {
             throw new CensusAnalyserException("no census data!",
                     CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
-        List<IndiaCensusDAO> censusDAOS = censusDAOMap.values().stream()
+        List<CensusDAO> censusDAOS = censusDAOMap.values().stream()
                                             .collect(Collectors.toList());
         this.sort(censusDAOS, myComparators.get(comparatorType));
         String sorted = new Gson().toJson(censusDAOS);
         return sorted;
     }
 
-    private void sort(List<IndiaCensusDAO> list, Comparator<IndiaCensusDAO> censusComparator) {
+    private void sort(List<CensusDAO> list, Comparator<CensusDAO> censusComparator) {
         for( int i=0 ; i<list.size()-1; i++){
             for ( int j=0 ; j<list.size()-i-1 ; j++ ){
-                IndiaCensusDAO censusObj1 = list.get(j);
-                IndiaCensusDAO censusObj2 = list.get(j+1);
+                CensusDAO censusObj1 = list.get(j);
+                CensusDAO censusObj2 = list.get(j+1);
                 if (censusComparator.compare(censusObj1,censusObj2) > 0){
                     list.set(j,censusObj2);
                     list.set(j+1,censusObj1);
