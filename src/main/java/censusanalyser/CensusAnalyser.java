@@ -25,9 +25,9 @@ public class CensusAnalyser {
         this.censusDAOMap = new HashMap<>();
         this.myComparators = new HashMap<>();
         this.myComparators.put(ComparatorType.STATE_NAME,Comparator.comparing(census -> census.state));
-        this.myComparators.put(ComparatorType.POPULATION,Comparator.comparing(census -> census.population));
-        this.myComparators.put(ComparatorType.AREA,Comparator.comparing(census -> census.areaInSqKm));
-        this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm));
+        this.myComparators.put(ComparatorType.POPULATION,Comparator.comparing(census -> census.population,Comparator.reverseOrder()));
+        this.myComparators.put(ComparatorType.AREA,Comparator.comparing(census -> census.areaInSqKm,Comparator.reverseOrder()));
+        this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm,Comparator.reverseOrder()));
     }
 
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
