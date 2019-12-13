@@ -2,8 +2,7 @@ package mycensusadapters;
 
 import censusanalyser.CensusAnalyser;
 import censusanalyser.CensusAnalyserException;
-import censusanalyser.CensusDAO;
-import mycensusadapters.IndiaCensusAdapter;
+import pojos.CensusDAO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

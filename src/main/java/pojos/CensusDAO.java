@@ -1,4 +1,4 @@
-package censusanalyser;
+package pojos;
 
 public class CensusDAO {
 
@@ -7,23 +7,26 @@ public class CensusDAO {
     public double areaInSqKm;
     public double densityPerSqKm;
     public int population;
+    public Object dtoObject;
 
     public CensusDAO(IndiaCensusCSV indiaCensusCsv) {
-        state = indiaCensusCsv.state;
-        areaInSqKm = indiaCensusCsv.areaInSqKm;
-        densityPerSqKm = indiaCensusCsv.densityPerSqKm;
-        population = indiaCensusCsv.population;
+        this.state = indiaCensusCsv.state;
+        this.areaInSqKm = indiaCensusCsv.areaInSqKm;
+        this.densityPerSqKm = indiaCensusCsv.densityPerSqKm;
+        this.population = indiaCensusCsv.population;
+        this.dtoObject = indiaCensusCsv;
     }
 
     public CensusDAO(USCensusData usCensusCsv) {
-        state = usCensusCsv.state;
-        stateCode = usCensusCsv.stateId;
-        population = usCensusCsv.population;
-        densityPerSqKm = usCensusCsv.populationDensity;
-        areaInSqKm = usCensusCsv.totalArea;
+        this.state = usCensusCsv.state;
+        this.stateCode = usCensusCsv.stateId;
+        this.population = usCensusCsv.population;
+        this.densityPerSqKm = usCensusCsv.populationDensity;
+        this.areaInSqKm = usCensusCsv.totalArea;
+        this.dtoObject = usCensusCsv;
     }
 
-    public IndiaCensusCSV getIndiaCensusCSV(){
-        return new IndiaCensusCSV(state,population,(int)densityPerSqKm,(int)areaInSqKm);
+    public Object getDtoObject(){
+        return this.dtoObject;
     }
 }

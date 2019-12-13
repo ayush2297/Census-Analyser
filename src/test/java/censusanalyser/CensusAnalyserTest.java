@@ -3,6 +3,8 @@ package censusanalyser;
 import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
+import pojos.IndiaCensusCSV;
+import pojos.USCensusData;
 
 public class CensusAnalyserTest {
 
@@ -47,7 +49,7 @@ public class CensusAnalyserTest {
             String sortedString = censusAnalyser.getSortedData(CensusAnalyser.ComparatorType.POPULATION);
             IndiaCensusCSV[] indiaCensusCSV = new Gson().fromJson(sortedString, IndiaCensusCSV[].class);
             Assert.assertEquals("Uttar Pradesh", indiaCensusCSV[0].state);
-        } catch (CensusAnalyserException e) { e.printStackTrace(); }
+        } catch (CensusAnalyserException e) { }
     }
 
     @Test

@@ -1,4 +1,4 @@
-package censusanalyser;
+package pojos;
 
 import com.opencsv.bean.CsvBindByName;
 

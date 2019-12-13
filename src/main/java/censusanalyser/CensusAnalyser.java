@@ -3,17 +3,17 @@ package censusanalyser;
 import com.google.gson.Gson;
 import mycensusadapters.CensusAdapter;
 import mycensusadapters.CensusAdapterFactory;
+import pojos.CensusDAO;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CensusAnalyser {
-    Map<String, CensusDAO> censusDAOMap = null;
-    Map<Enum,Comparator<CensusDAO>> myComparators = null;
+
+    public CensusAnalyserDataFactory data;
 
     public enum CountryName {
         INDIA,US
-
     }
 
     public enum ComparatorType {
@@ -21,35 +21,34 @@ public class CensusAnalyser {
     }
 
     public CensusAnalyser() {
-        this.censusDAOMap = new HashMap<>();
-        this.myComparators = new HashMap<>();
-        this.myComparators.put(ComparatorType.STATE_NAME,Comparator.comparing(census -> census.state));
-        this.myComparators.put(ComparatorType.POPULATION,Comparator.comparing(census -> census.population,Comparator.reverseOrder()));
-        this.myComparators.put(ComparatorType.AREA,Comparator.comparing(census -> census.areaInSqKm,Comparator.reverseOrder()));
-        this.myComparators.put(ComparatorType.DENSITY,Comparator.comparing(census -> census.densityPerSqKm,Comparator.reverseOrder()));
+        this.data = new CensusAnalyserDataFactory();
     }
 
     public int loadCensusData(CountryName countryName, String... csvFilePath) throws CensusAnalyserException {
         CensusAdapter censusAdapter = CensusAdapterFactory.getAdapter(countryName);
-        censusDAOMap = censusAdapter.loadCensusData(csvFilePath);
-        return censusDAOMap.size();
+        data.censusDAOMap = censusAdapter.loadCensusData(csvFilePath);
+        return data.censusDAOMap.size();
     }
 
     private boolean isNull(Map thisList) {
-        if (censusDAOMap == null || censusDAOMap.size() == 0 ) {
+        if (data.censusDAOMap == null || data.censusDAOMap.size() == 0 ) {
             return true;
         }
         return false;
     }
 
     public String getSortedData(ComparatorType comparatorType) throws CensusAnalyserException {
-        if (isNull(censusDAOMap)) {
+        if (isNull(data.censusDAOMap)) {
             throw new CensusAnalyserException("no census data!",
                     CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
-        List<CensusDAO> censusDAOS = censusDAOMap.values().stream()
+        List<CensusDAO> censusDAOS = data.censusDAOMap.values().stream()
                                             .collect(Collectors.toList());
-        this.sort(censusDAOS, myComparators.get(comparatorType));
+        this.sort(censusDAOS, data.myComparators.get(comparatorType));
+        List<Object> list = new ArrayList<>();
+        for (CensusDAO censusDAO: censusDAOS) {
+            list.add(censusDAO.dtoObject);
+        }
         String sorted = new Gson().toJson(censusDAOS);
         return sorted;
     }

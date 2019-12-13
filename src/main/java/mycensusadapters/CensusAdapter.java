@@ -1,9 +1,9 @@
 package mycensusadapters;
 
 import censusanalyser.CensusAnalyserException;
-import censusanalyser.CensusDAO;
-import censusanalyser.IndiaCensusCSV;
-import censusanalyser.USCensusData;
+import pojos.CensusDAO;
+import pojos.IndiaCensusCSV;
+import pojos.USCensusData;
 import com.myopencsv.CsvBuilderFactory;
 import com.myopencsv.ICsvBuilder;
 import com.myopencsv.OpenCsvException;
@@ -27,11 +27,11 @@ public abstract class CensusAdapter {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<E> censusDataIterator = csvBuilder.getCsvFileIterator(reader,censusDataClass);
             Iterable<E> censusDataIterable = () -> censusDataIterator;
-            if (censusDataClass.getName().equals("censusanalyser.USCensusData")) {
+            if (censusDataClass.getName().equals("pojos.USCensusData")) {
                 StreamSupport.stream(censusDataIterable.spliterator(), false)
                         .map(USCensusData.class::cast)
                         .forEach(censusCSV -> censusDAOMap.put(censusCSV.state, new CensusDAO(censusCSV)));
-            } else if (censusDataClass.getName().contains("censusanalyser.IndiaCensusCSV")) {
+            } else if (censusDataClass.getName().contains("pojos.IndiaCensusCSV")) {
                 StreamSupport.stream(censusDataIterable.spliterator(), false)
                         .map(IndiaCensusCSV.class::cast)
                         .forEach(censusCSV -> censusDAOMap.put(censusCSV.state, new CensusDAO(censusCSV)));
