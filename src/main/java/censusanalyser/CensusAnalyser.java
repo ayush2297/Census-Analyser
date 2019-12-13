@@ -3,14 +3,7 @@ package censusanalyser;
 import com.google.gson.Gson;
 import mycensusadapters.CensusAdapter;
 import mycensusadapters.CensusAdapterFactory;
-import pojos.CensusDAO;
-import pojos.DtoClass;
-import pojos.IndiaCensusCSV;
-import pojos.USCensusData;
-
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toCollection;
 
