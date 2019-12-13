@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static censusanalyser.CensusAnalyser.ComparatorType.*;
-
 public class CensusAnalyserDataFactory {
     Map<String, CensusDAO> censusDAOMap = new HashMap<>();
     Comparator<CensusDAO> tempComp = Comparator.comparing(censusDAO -> censusDAO.population,Comparator.reverseOrder());

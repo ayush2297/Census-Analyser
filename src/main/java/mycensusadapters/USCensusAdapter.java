@@ -3,7 +3,6 @@ package mycensusadapters;
 import censusanalyser.CensusAnalyserException;
 import pojos.CensusDAO;
 import pojos.USCensusData;
-
 import java.util.Map;
 
 public class USCensusAdapter extends CensusAdapter {

@@ -4,7 +4,6 @@ import censusanalyser.CensusAnalyser;
 import censusanalyser.CensusAnalyserException;
 
 public class CensusAdapterFactory {
-
     public static CensusAdapter getAdapter(CensusAnalyser.CountryName countryName) throws CensusAnalyserException {
         switch (countryName){
             case INDIA:

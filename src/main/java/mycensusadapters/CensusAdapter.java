@@ -6,9 +6,7 @@ import pojos.CensusDAO;
 import pojos.IndiaCensusCSV;
 import pojos.USCensusData;
 import com.myopencsv.CsvBuilderFactory;
-import com.myopencsv.ICsvBuilder;
 import com.myopencsv.OpenCsvException;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;

@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import mycensusadapters.CensusAdapter;
 import mycensusadapters.CensusAdapterFactory;
 import java.util.*;
-
 import static java.util.stream.Collectors.toCollection;
 
 public class CensusAnalyser {
-
     public CensusAnalyserDataFactory data;
 
     public enum CountryName {

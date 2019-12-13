@@ -18,8 +18,6 @@ public class CensusAnalyserTest {
     private static final String EMPTY_FILE_PATH = "./src/test/resources/empty.csv";
     private static final String WRONG_CSV_FILE_PATH = "./src/main/resources/IndiaStateCensusData1.csv";
 
-
-
     @Test
     public void givenIndianCensusList_WhenEmptyOrNull_ShouldThrowCensusAnalyserException() {
         try {

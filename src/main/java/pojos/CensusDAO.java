@@ -1,7 +1,6 @@
 package pojos;
 
 public class CensusDAO {
-
     public String state;
     public String stateCode=null;
     public double areaInSqKm;
