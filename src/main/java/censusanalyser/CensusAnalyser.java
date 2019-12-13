@@ -7,7 +7,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toCollection;
 
 public class CensusAnalyser {
-    public CensusAnalyserDataFactory data;
+    public CensusAnalyserDataFactory censusAnalyserData;
 
     public enum CountryName {
         INDIA,US,OTHER
@@ -18,31 +18,31 @@ public class CensusAnalyser {
     }
 
     public CensusAnalyser() {
-        this.data = new CensusAnalyserDataFactory();
+        this.censusAnalyserData = new CensusAnalyserDataFactory();
     }
 
     public int loadCensusData(CountryName countryName, String... csvFilePath) throws CensusAnalyserException {
-        this.data.country = countryName;
+        this.censusAnalyserData.country = countryName;
         CensusAdapter censusAdapter = CensusAdapterFactory.getAdapter(countryName);
-        data.censusDAOMap = censusAdapter.loadCensusData(csvFilePath);
-        return data.censusDAOMap.size();
+        censusAnalyserData.censusDAOMap = censusAdapter.loadCensusData(csvFilePath);
+        return censusAnalyserData.censusDAOMap.size();
     }
 
     public String getSortedData(ComparatorType comparatorType) throws CensusAnalyserException {
-        if (data.censusDAOMap.size() == 0 || data.censusDAOMap == null){
+        if (censusAnalyserData.censusDAOMap.size() == 0 || censusAnalyserData.censusDAOMap == null){
             throw new CensusAnalyserException("no census data!",
                     CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
         ArrayList outputList = null;
-        CountryName country = this.data.country;
+        CountryName country = this.censusAnalyserData.country;
         if (country.equals(CountryName.INDIA)) {
-            outputList = this.data.censusDAOMap.values().stream()
-                    .sorted(this.data.myComparators.get(comparatorType))
+            outputList = this.censusAnalyserData.censusDAOMap.values().stream()
+                    .sorted(this.censusAnalyserData.myComparators.get(comparatorType))
                     .map(dto -> dto.getIndDtoObject())
                     .collect(toCollection(ArrayList::new));
         } else if (country.equals(CountryName.US)) {
-            outputList = this.data.censusDAOMap.values().stream()
-                    .sorted(this.data.myComparators.get(comparatorType))
+            outputList = this.censusAnalyserData.censusDAOMap.values().stream()
+                    .sorted(this.censusAnalyserData.myComparators.get(comparatorType))
                     .map(dto -> dto.getUsDtoObject())
                     .collect(toCollection(ArrayList::new));
         }
