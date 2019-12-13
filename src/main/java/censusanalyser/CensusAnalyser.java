@@ -12,7 +12,7 @@ public class CensusAnalyser {
     public CensusAnalyserDataFactory data;
 
     public enum CountryName {
-        INDIA,US
+        INDIA,US,OTHER
     }
 
     public enum ComparatorType {
