@@ -21,14 +21,14 @@ public abstract class CensusAdapter {
         Map<String,CensusDAO> censusDAOMap = new HashMap<>();
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
-            Iterator<E> usCensusDataIterator = csvBuilder.getCsvFileIterator(reader,censusDataClass);
-            Iterable<E> usCensusDataIterable = () -> usCensusDataIterator;
+            Iterator<E> censusDataIterator = csvBuilder.getCsvFileIterator(reader,censusDataClass);
+            Iterable<E> censusDataIterable = () -> censusDataIterator;
             if (censusDataClass.getName().equals("censusanalyser.USCensusData")) {
-                StreamSupport.stream(usCensusDataIterable.spliterator(), false)
+                StreamSupport.stream(censusDataIterable.spliterator(), false)
                         .map(USCensusData.class::cast)
                         .forEach(censusCSV -> censusDAOMap.put(censusCSV.state, new CensusDAO(censusCSV)));
             } else if (censusDataClass.getName().contains("censusanalyser.IndiaCensusCSV")) {
-                StreamSupport.stream(usCensusDataIterable.spliterator(), false)
+                StreamSupport.stream(censusDataIterable.spliterator(), false)
                         .map(IndiaCensusCSV.class::cast)
                         .forEach(censusCSV -> censusDAOMap.put(censusCSV.state, new CensusDAO(censusCSV)));
             }
@@ -38,6 +38,9 @@ public abstract class CensusAdapter {
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (OpenCsvException e) {
             throw new CensusAnalyserException("delimiter or header error", CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
+        } catch (NullPointerException e) {
+            throw new CensusAnalyserException("no file input...(null)",
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (RuntimeException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
         }

@@ -28,6 +28,9 @@ public class IndiaCensusAdapter extends CensusAdapter {
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (OpenCsvException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
+        } catch (NullPointerException e) {
+            throw new CensusAnalyserException("no file input...(null)",
+                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (RuntimeException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE);
         }
@@ -39,9 +42,6 @@ public class IndiaCensusAdapter extends CensusAdapter {
             Map<String,CensusDAO> censusDAOMap = super.loadCensusData(IndiaCensusCSV.class,csvFilePath[0]);
             censusDAOMap = this.loadIndiaStateCodeData(censusDAOMap, csvFilePath[1]);
             return censusDAOMap;
-        } catch (NullPointerException e) {
-            throw new CensusAnalyserException("no file input...(null)",
-                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new CensusAnalyserException("second file not passed!!",CensusAnalyserException.ExceptionType.INSUFFICIENT_NUMBER_OF_FILES);
         }
