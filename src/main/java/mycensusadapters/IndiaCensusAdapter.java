@@ -1,5 +1,9 @@
-package censusanalyser;
+package mycensusadapters;
 
+import censusanalyser.CensusAnalyserException;
+import censusanalyser.CensusDAO;
+import censusanalyser.IndiaCensusCSV;
+import censusanalyser.IndiaStateCode;
 import com.myopencsv.CsvBuilderFactory;
 import com.myopencsv.ICsvBuilder;
 import com.myopencsv.OpenCsvException;

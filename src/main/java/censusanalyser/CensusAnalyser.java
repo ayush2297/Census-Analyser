@@ -1,6 +1,8 @@
 package censusanalyser;
 
 import com.google.gson.Gson;
+import mycensusadapters.CensusAdapter;
+import mycensusadapters.CensusAdapterFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,7 +35,7 @@ public class CensusAnalyser {
         return censusDAOMap.size();
     }
 
-    public boolean isNull(Map thisList) {
+    private boolean isNull(Map thisList) {
         if (censusDAOMap == null || censusDAOMap.size() == 0 ) {
             return true;
         }

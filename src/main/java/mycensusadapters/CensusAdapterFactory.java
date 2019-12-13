@@ -1,4 +1,7 @@
-package censusanalyser;
+package mycensusadapters;
+
+import censusanalyser.CensusAnalyser;
+import censusanalyser.CensusAnalyserException;
 
 public class CensusAdapterFactory {
 
