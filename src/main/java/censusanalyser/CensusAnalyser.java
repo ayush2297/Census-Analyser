@@ -31,15 +31,8 @@ public class CensusAnalyser {
         return data.censusDAOMap.size();
     }
 
-    private boolean isNull(Map thisList) {
-        if (thisList == null || thisList.size() == 0 ) {
-            return true;
-        }
-        return false;
-    }
-
     public String getSortedData(ComparatorType comparatorType) throws CensusAnalyserException {
-        if (isNull(data.censusDAOMap)) {
+        if (data.censusDAOMap.size() == 0 || data.censusDAOMap == null) {
             throw new CensusAnalyserException("no census data!",
                     CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
