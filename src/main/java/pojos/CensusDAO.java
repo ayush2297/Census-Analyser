@@ -7,14 +7,15 @@ public class CensusDAO {
     public double areaInSqKm;
     public double densityPerSqKm;
     public int population;
-    public Object dtoObject;
+    public IndiaCensusCSV indDtoObject = null;
+    public USCensusData usDtoObject = null;
 
     public CensusDAO(IndiaCensusCSV indiaCensusCsv) {
         this.state = indiaCensusCsv.state;
         this.areaInSqKm = indiaCensusCsv.areaInSqKm;
         this.densityPerSqKm = indiaCensusCsv.densityPerSqKm;
         this.population = indiaCensusCsv.population;
-        this.dtoObject = indiaCensusCsv;
+        this.indDtoObject = indiaCensusCsv;
     }
 
     public CensusDAO(USCensusData usCensusCsv) {
@@ -23,10 +24,15 @@ public class CensusDAO {
         this.population = usCensusCsv.population;
         this.densityPerSqKm = usCensusCsv.populationDensity;
         this.areaInSqKm = usCensusCsv.totalArea;
-        this.dtoObject = usCensusCsv;
+        this.usDtoObject = usCensusCsv;
     }
 
-    public Object getDtoObject(){
-        return this.dtoObject;
+    public IndiaCensusCSV getIndDtoObject(){
+        return this.indDtoObject;
     }
+
+    public USCensusData getUsDtoObject(){
+        return this.usDtoObject;
+    }
+
 }

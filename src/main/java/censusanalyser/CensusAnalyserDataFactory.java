@@ -16,4 +16,5 @@ public class CensusAnalyserDataFactory {
         put(CensusAnalyser.ComparatorType.DENSITY, Comparator.comparing(census -> census.densityPerSqKm, Comparator.reverseOrder()));
     }};
     CensusAnalyser.CountryName country;
+
 }

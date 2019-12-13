@@ -13,11 +13,8 @@ public class USCensusData {
     @CsvBindByName(column = "Population", required = true)
     public int population;
 
-    @CsvBindByName(column = "Housing", required = true)
+    @CsvBindByName(column = "Housing units", required = true)
     public int housing;
-
-    @CsvBindByName(column = "units", required = true)
-    public int units;
 
     @CsvBindByName(column = "Total area", required = true)
     public double totalArea;

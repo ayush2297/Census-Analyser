@@ -1,6 +1,7 @@
 package mycensusadapters;
 
 import censusanalyser.CensusAnalyserException;
+import com.myopencsv.OpenCsvBuilder;
 import pojos.CensusDAO;
 import pojos.IndiaCensusCSV;
 import pojos.USCensusData;
@@ -24,7 +25,7 @@ public abstract class CensusAdapter {
     protected <E> Map<String, CensusDAO> loadCensusData(Class<E> censusDataClass, String csvFilePath) throws CensusAnalyserException {
         Map<String,CensusDAO> censusDAOMap = new HashMap<>();
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
-            ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
+            OpenCsvBuilder csvBuilder = (OpenCsvBuilder) CsvBuilderFactory.createCsvBuilder();
             Iterator<E> censusDataIterator = csvBuilder.getCsvFileIterator(reader,censusDataClass);
             Iterable<E> censusDataIterable = () -> censusDataIterator;
             if (censusDataClass.getName().equals("pojos.USCensusData")) {

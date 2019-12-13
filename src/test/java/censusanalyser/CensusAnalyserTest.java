@@ -60,7 +60,7 @@ public class CensusAnalyserTest {
             String sortedString = censusAnalyser.getSortedData(CensusAnalyser.ComparatorType.AREA);
             IndiaCensusCSV[] indiaCensusCSV = new Gson().fromJson(sortedString, IndiaCensusCSV[].class);
             Assert.assertEquals("Rajasthan", indiaCensusCSV[0].state);
-        } catch (CensusAnalyserException e) { }
+        } catch (CensusAnalyserException e) { e.printStackTrace();}
     }
 
     @Test
