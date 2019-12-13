@@ -1,5 +1,9 @@
-package censusanalyser;
+package mycensusadapters;
 
+import censusanalyser.CensusAnalyser;
+import censusanalyser.CensusAnalyserException;
+import censusanalyser.CensusDAO;
+import mycensusadapters.IndiaCensusAdapter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -18,7 +22,7 @@ public class IndiaCensusAdapterTest {
     public void givenAStateCensusDataCsvFile_ShouldReturnNumberOfRecords() {
         IndiaCensusAdapter indiaCensusAdapter = new IndiaCensusAdapter();
         try {
-            Map<String,CensusDAO> testHashmap = indiaCensusAdapter.loadCensusData(
+            Map<String, CensusDAO> testHashmap = indiaCensusAdapter.loadCensusData(
                     INDIA_CENSUS_CSV_FILE_PATH,INDIA_STATE_CODE_CSV_FILE_PATH);
             Assert.assertEquals(29,testHashmap.size());
         } catch (CensusAnalyserException e) {

@@ -1,5 +1,9 @@
-package censusanalyser;
+package mycensusadapters;
 
+import censusanalyser.CensusAnalyser;
+import censusanalyser.CensusAnalyserException;
+import censusanalyser.CensusDAO;
+import mycensusadapters.USCensusAdapter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

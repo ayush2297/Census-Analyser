@@ -10,12 +10,14 @@ public class CensusAnalyserTest {
     private static final String INDIA_STATE_CODE_CSV_FILE_PATH = "./src/test/resources/IndiaStateCode.csv";
     private static final String CENSUS_CSV_WITH_ERROR_FILE_PATH = "./src/test/resources/IndiaStateCensusDataWithErrors.csv";
     private static final String CODE_CSV_WITH_ERROR_FILE_PATH = "./src/test/resources/IndiaStateCodeWithErrors.csv";
-    private static final String EMPTY_FILE_PATH = "./src/test/resources/empty.csv";
-    private static final String WRONG_CSV_FILE_PATH = "./src/main/resources/IndiaStateCensusData1.csv";
-
     private static final String US_CENSUS_CSV_FILE_PATH = "./src/test/resources/USCensusData.csv";
     private static final String US_CENSUS_CSV_WITH_WRONG_HEADER_FILE_PATH = "./src/test/resources/USCensusDataWithHeaderErrors.csv";
     private static final String US_CENSUS_CSV_WITH_WRONG_DELIMITER_FILE_PATH = "./src/test/resources/USCensusDataWithDelimiterErrors.csv";
+    private static final String EMPTY_FILE_PATH = "./src/test/resources/empty.csv";
+    private static final String WRONG_CSV_FILE_PATH = "./src/main/resources/IndiaStateCensusData1.csv";
+
+
+
     @Test
     public void givenIndianCensusList_WhenEmptyOrNull_ShouldThrowCensusAnalyserException() {
         try {
@@ -205,6 +207,46 @@ public class CensusAnalyserTest {
             USCensusData[] usCensusData = new Gson().fromJson(sortedString, USCensusData[].class);
             Assert.assertEquals("District of Columbia", usCensusData[0].state);
         } catch (CensusAnalyserException e) {
+        }
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedBasedOnAnyField_ButPassingFileWithDelimiterErrors_ShouldReturnTrue() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadCensusData(CensusAnalyser.CountryName.US,US_CENSUS_CSV_WITH_WRONG_DELIMITER_FILE_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE,e.type);
+        }
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedBasedOnAnyField_ButPassingFileWithHeaderError_ShouldReturnTrue() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadCensusData(CensusAnalyser.CountryName.US,US_CENSUS_CSV_WITH_WRONG_HEADER_FILE_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.INCORRECT_DATA_ISSUE,e.type);
+        }
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedBasedOnAnyField_ButPassingNullFile_ShouldReturnTrue() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadCensusData(CensusAnalyser.CountryName.US,null);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.NO_CENSUS_DATA,e.type);
+        }
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedBasedOnAnyField_ButPassingWrongFile_ShouldReturnTrue() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadCensusData(CensusAnalyser.CountryName.US,WRONG_CSV_FILE_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM,e.type);
         }
     }
 }
