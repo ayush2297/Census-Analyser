@@ -25,13 +25,14 @@ public class CensusAnalyser {
     }
 
     public int loadCensusData(CountryName countryName, String... csvFilePath) throws CensusAnalyserException {
+        this.data.country = countryName;
         CensusAdapter censusAdapter = CensusAdapterFactory.getAdapter(countryName);
         data.censusDAOMap = censusAdapter.loadCensusData(csvFilePath);
         return data.censusDAOMap.size();
     }
 
     private boolean isNull(Map thisList) {
-        if (data.censusDAOMap == null || data.censusDAOMap.size() == 0 ) {
+        if (thisList == null || thisList.size() == 0 ) {
             return true;
         }
         return false;
